@@ -1,0 +1,10 @@
+{
+  "_comment": "MAIR+ stage activation thresholds (C8). Set 'calibrated' to true after running evaluation/calibrate_thresholds.py",
+  "compression": 0.20,
+  "imaging":     0.20,
+  "scene":       0.20,
+  "calibrated":  false,
+  "calibrated_on": null,
+  "calibration_metric": "avg_ssim_gain",
+  "search_range": [0.10, 0.15, 0.20, 0.25, 0.30, 0.35]
+}

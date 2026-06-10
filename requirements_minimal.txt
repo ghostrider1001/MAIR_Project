@@ -1,0 +1,18 @@
+# MAIR+ v2 — Minimal Requirements (CPU-only, no GPU needed)
+# Install with: pip install -r requirements_minimal.txt
+
+opencv-python>=4.8.0
+scikit-image>=0.21.0
+numpy>=1.24.0
+einops>=0.6.0
+matplotlib>=3.7.0
+
+# For interactive notebook demo
+jupyter>=1.0.0
+ipykernel>=6.0.0
+Pillow>=9.0.0
+
+# Optional: LPIPS perceptual metric (requires PyTorch)
+# torch>=2.0.0
+# torchvision>=0.15.0
+# lpips>=0.1.4

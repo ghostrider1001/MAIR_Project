@@ -1,0 +1,64 @@
+# ─── Python bytecode ──────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+
+# ─── Virtual environments ─────────────────────────────────────
+venv/
+.venv/
+env/
+ENV/
+
+# ─── IDE / editor ────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ─── MAIR+ generated outputs ─────────────────────────────────
+# Inter-stage pipeline images (temp, not for tracking)
+outputs/pipeline_tmp/
+
+# Case memory (C9) — user-specific, grows with usage
+outputs/memory/
+outputs/memory/case_memory.json
+
+# HTML report cards (C7) — generated per run
+outputs/reports/
+
+# Benchmark restored images
+outputs/benchmark/
+results/benchmark_outputs/
+
+# ─── MAIR+ config (calibrated, not defaults) ─────────────────
+# Only ignore if locally calibrated (has calibrated=true set)
+# config/thresholds.json   ← kept in repo as default (calibrated=false)
+
+# ─── Model weights (too large for git) ───────────────────────
+models/SwinIR/experiments/pretrained_models/*.pth
+models/Restormer/Motion_Deblurring/pretrained_models/*.pth
+models/Restormer/Deraining/pretrained_models/*.pth
+models/Restormer/Deblurring/pretrained_models/*.pth
+models/SwinIR/model_zoo/*.pth
+
+# ─── Benchmark datasets (generated locally, not committed) ───
+datasets/benchmark/
+datasets/calibration/
+
+# ─── Results CSV / JSON (too large for git, use DVC/artifacts) 
+results/*.csv
+results/*.json
+
+# ─── Notebooks / scratch ─────────────────────────────────────
+notebooks/.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# ─── Environment / deps ──────────────────────────────────────
+*.egg-info/
+dist/
+build/
+
+models/
