@@ -62,3 +62,8 @@ dist/
 build/
 
 models/
+
+outputs/
+results/
+*.pptx
+*.png
