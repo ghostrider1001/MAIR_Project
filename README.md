@@ -71,7 +71,7 @@ Input Image
 | C10 | Confidence-Tiered Scheduling | `scheduler/confidence_policy.py` |
 | C11 | Resolution-Aware Ranking | `core/tool_registry.py`, `scheduler/expert_selector.py` |
 | C12 | Expert Voting Ensemble | `scheduler/voting_scheduler.py`, `experts/unsharp_deblur_expert.py` |
-| C13 | Wiener Deconvolution Deblur | `experts/wiener_deblur_expert.py` |
+
 
 ---
 
