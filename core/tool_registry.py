@@ -92,17 +92,17 @@ REGISTRY = {
         "preserves_size": False,          # 4x upscale changes dimensions
         "description": "SwinIR Real-SR x4 (GAN) — upscales low-resolution images 4×",
     },
-    "restormer_deblur": {
-        "name":        "Restormer Motion Deblurring",
-        "fn":          restore_deblur,
-        "task":        "blur",
-        "handles":     ["blur"],
+    "nafnet_lite_denoise": {
+        "name":        "NAFNet-Lite Channel Gating",
+        "fn":          restore_nafnet_lite,
+        "task":        "denoise",
+        "handles":     ["denoise", "blur"],  # Use NAFNet for blur too to avoid Restormer white blob
         "stage":       "imaging",        # Stage 2
-        "speed":       "slow",
-        "quality":     "very_high",
-        "gpu_boost":   True,
+        "speed":       "fast",
+        "quality":     "high",
+        "gpu_boost":   False,
         "preserves_size": True,
-        "description": "Restormer transformer — removes camera-shake and motion blur",
+        "description": "NAFNet-inspired variance gating — handles noise and blur safely",
     },
     "opencv_denoise": {
         "name":        "OpenCV NLM Denoising",
@@ -208,7 +208,7 @@ REGISTRY = {
         "name":        "Frequency-Domain Deraining",
         "fn":          restore_derain,
         "task":        "rain",
-        "handles":     ["rain", "denoise"],
+        "handles":     ["rain"],
         "stage":       "scene",          # Stage 3
         "speed":       "fast",
         "quality":     "high",

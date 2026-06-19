@@ -6,6 +6,7 @@ import cv2
 from scheduler.scheduler import run_scheduler, run_three_stage_scheduler
 from utils.visualizer import save_comparison
 from utils.report_generator import generate_report  # C7
+from evaluation.clinical_evaluator import print_clinical_report  # Clinical Evaluation Expert
 
 
 def _compute_scores(original_path, restored_path):
@@ -78,6 +79,11 @@ def main():
         metavar="SECONDS",
         help="Time budget in seconds — skip slow stages near expiry (C11)",
     )
+    parser.add_argument(
+        "--clinical_eval",
+        action="store_true",
+        help="Enable the Clinical Evaluation Expert (NR-IQA metrics) instead of SSIM/PSNR for unpaired medical data.",
+    )
     args = parser.parse_args()
     input_image = args.input
     use_tsf     = not args.no_tsf
@@ -104,6 +110,7 @@ def main():
             voting=args.voting,
             use_memory=use_memory,
             budget_seconds=args.budget,
+            clinical_eval=args.clinical_eval
         )
         restored_output = result["output_path"]
         total_time      = result["total_time_s"]
@@ -148,9 +155,15 @@ def main():
         print(f"  Mode     : {mode_label}")
         print(f"  Input    : {input_image}")
         print(f"  Restored : {restored_output}")
-        if scores:
-            print(f"  SSIM     : {scores.get('ssim', 'N/A')}")
-            print(f"  PSNR     : {scores.get('psnr', 'N/A')} dB")
+        if args.clinical_eval:
+            print(f"  Eval Mode: Clinical (NR-IQA)")
+            # Run and print the clinical evaluation expert report
+            print_clinical_report(input_image, restored_output)
+        else:
+            if scores:
+                print(f"  SSIM     : {scores.get('ssim', 'N/A')}")
+                print(f"  PSNR     : {scores.get('psnr', 'N/A')} dB")
+        
         print(f"  Time     : {total_time}s")
         if n_invocations is not None:
             print(f"  Calls    : {n_invocations} expert invocation(s)")

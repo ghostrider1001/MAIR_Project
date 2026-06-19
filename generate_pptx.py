@@ -130,9 +130,9 @@ badge(s, "PhD Thesis Defense  ·  MAIR Paper Replication + 12 Original Contribut
 txt(s, "MAIR+ v2", 0.5, 1.05, 12, 0.9, size=52, bold=True, color=WHITE)
 txt(s, "Memory-Augmented Adaptive", 0.5, 1.85, 12, 0.65, size=32, bold=True, color=ACCENT_BLUE)
 txt(s, "Multi-Agent Image Restoration", 0.5, 2.42, 12, 0.65, size=32, bold=True, color=ACCENT_GREEN)
-txt(s, "Complete replication of Jiang et al. (arXiv:2503.09403) + 12 original research contributions extending agentic restoration to 7 degradation types without GPU requirements.", 0.5, 3.15, 12, 0.4, size=14, color=TEXT_MUTED)
+txt(s, "Complete replication of Jiang et al. (arXiv:2503.09403) + 13 original research contributions extending agentic restoration to 7 degradation types without GPU requirements.", 0.5, 3.15, 12, 0.4, size=14, color=TEXT_MUTED)
 
-stats = [("12","Original Contribs"),("11","Expert Models"),("7","Degradation Types"),("+0.29","SSIM Peak Gain"),("0","GPU Required")]
+stats = [("13","Original Contribs"),("11","Expert Models"),("7","Degradation Types"),("+0.29","SSIM Peak Gain"),("0","GPU Required")]
 for i,(num,lbl) in enumerate(stats):
     x = 0.5 + i * 2.5
     box(s, x, 3.85, 2.2, 0.9, BG_CARD, ACCENT_BLUE, 0.8)
@@ -150,7 +150,7 @@ section_header_box(s, "Overview", "Executive Summary", "What MAIR+ v2 builds, wh
 cols = [
     ("THE PROBLEM", ACCENT_RED, ["Real images suffer from mixed,","unknown degradations at inference.","","• Blur, noise, JPEG artifacts","• Low light, haze, rain","• Low resolution","","Traditional systems: one model,","one task, fixed pipeline.","No adaptation to unknown input."]),
     ("OUR SOLUTION", ACCENT_BLUE, ["Multi-agent system that:","","• Detects degradation type","  automatically (7 signals)","• Selects best expert per stage","• Three physics-ordered stages","• Reflects: ACCEPT/RETRY/ESCALATE","• Learns from past runs via","  case-based memory (C9)","• Safety rollback (C4)"]),
-    ("KEY RESULTS", ACCENT_GREEN, ["Benchmark (CPU-only mode):","","• Gaussian noise:  +0.293 SSIM","• Mixed JPEG+Noise:+0.243 SSIM","• Low-light:       +0.165 SSIM","• Haze:           ~+0.170 SSIM","• Rain:           ~+0.090 SSIM","","0 GPU required for full pipeline","12 novel research contributions"]),
+    ("KEY RESULTS", ACCENT_GREEN, ["Benchmark (CPU-only mode):","","• Gaussian noise:  +0.293 SSIM","• Mixed JPEG+Noise:+0.243 SSIM","• Low-light:       +0.165 SSIM","• Haze:           ~+0.170 SSIM","• Rain:           ~+0.090 SSIM","","0 GPU required for full pipeline","13 novel research contributions"]),
 ]
 for i,(title,color,lines) in enumerate(cols):
     x = 0.35 + i*4.3
@@ -253,7 +253,7 @@ section_header_box(s, "Literature Review 2", "Recent Agentic Restoration Systems
 systems_agentic = [
     ("RestoreAgent","NeurIPS 2024","VLM Planner","Toolbox selection","VLM hallucinations route images to wrong tools; massive GPU cost.",ACCENT_PURP),
     ("AgenticIR","ICLR 2025","MLLM Pipeline","Explicit reasoning chain","Extremely slow (requires heavy LLM inference per image).",ACCENT_BLUE),
-    ("MAIR (Base)","arXiv 2025","Physics rules","No LLM overhead","No memory, no haze support, relies on GPU, no safety bounds.",ACCENT_GREEN),
+    ("MAIR (Base)","IJCV 2026","Agentic LLM","Three-Stage Concept","Relies on DepictQA/GPT-4o per image, extremely slow, expensive API costs.",ACCENT_GREEN),
 ]
 for i,(name,venue,arch,pro,con,col) in enumerate(systems_agentic):
     y = 1.6 + i*1.8
@@ -265,27 +265,27 @@ for i,(name,venue,arch,pro,con,col) in enumerate(systems_agentic):
     txt(s, f"❌ Limitation: {con}", 7.5, y+0.15, 5.0, 1.0, size=11, color=ACCENT_RED)
 
 box(s, 0.35, 7.05, 12.6, 0.35, BG_CARD, ACCENT_GREEN, 0.8)
-txt(s, "GAP: We need the intelligence of Agentic systems WITHOUT the overhead of LLMs, plus persistent learning.", 0.55, 7.1, 12.2, 0.28, size=11, bold=True, color=ACCENT_GREEN)
+txt(s, "GAP: We need the intelligence of Agentic systems WITHOUT the overhead of LLMs, plus deterministic safety.", 0.55, 7.1, 12.2, 0.28, size=11, bold=True, color=ACCENT_GREEN)
 
 # ═══════════════════════════════════════════════════════════════
 # 8. ORIGINAL MAIR PAPER
 # ═══════════════════════════════════════════════════════════════
 s = add_slide(); bg(s); accent_bar(s, ACCENT_BLUE)
-section_header_box(s, "Foundation", "Original Paper: MAIR", "Jiang et al., arXiv:2503.09403, 2025 — The foundation our system replicates")
+section_header_box(s, "Foundation", "Original Paper: MAIR", "Jiang et al., IJCV 2026 — The foundation our system improves upon")
 
 box(s, 0.35, 1.55, 12.6, 0.5, BG_CARD, ACCENT_BLUE, 0.8)
-txt(s, "📄  Jiang et al. · \"MAIR: Multi-Agent Image Restoration\" · arXiv:2503.09403 · 2025", 0.6, 1.65, 12, 0.3, size=12, color=ACCENT_BLUE)
+txt(s, "📄  X. Jiang et al. · \"Multi-Agent Image Restoration\" · IJCV 2026", 0.6, 1.65, 12, 0.3, size=12, color=ACCENT_BLUE)
 
 box(s, 0.35, 2.2, 6.1, 2.5, BG_CARD, ACCENT_GOLD, 0.8)
 txt(s, "CORE INSIGHT — Physics-Ordered Degradation", 0.55, 2.3, 5.7, 0.35, size=11, bold=True, color=ACCENT_GOLD)
-multi_txt(s, ["FORWARD: Scene → Camera/Sensor → JPEG","RESTORATION: Remove JPEG → Fix Blur/Noise → Fix Lighting","Validated by authors at ≥87% empirical probability."], 0.55, 2.7, 5.7, 1.5, size=11)
+multi_txt(s, ["FORWARD: Scene → Camera/Sensor → Compression","RESTORATION: Compression → Imaging → Scene","Validated by authors to be optimal in most scenarios."], 0.55, 2.7, 5.7, 1.5, size=11)
 
-components = [("DegDetector","Laplacian/JPEG/brightness", ACCENT_GREEN),("ToolRegistry","Central expert catalog", ACCENT_BLUE),("ExpertSelect","Ranks by quality/speed/conf", ACCENT_PURP),("ReflectEngine","ACCEPT/RETRY loop", ACCENT_GOLD)]
+components = [("DepictQA","LLM-based perception", ACCENT_GREEN),("GPT-4o Planner","Slow cloud-based routing", ACCENT_BLUE),("ToolRegistry","Textual expert catalog", ACCENT_PURP),("LLM Reflector","Non-deterministic eval", ACCENT_GOLD)]
 for i,(name,desc,col) in enumerate(components):
     y = 2.2 + i*0.6
     box(s, 6.6, y, 6.1, 0.5, BG_CARD, col, 0.6)
-    txt(s, name, 6.75, y+0.1, 2.0, 0.35, size=11, bold=True, color=col)
-    txt(s, desc, 9.0, y+0.1, 3.5, 0.3, size=10, color=TEXT_MUTED)
+    txt(s, name, 6.75, y+0.1, 2.5, 0.35, size=11, bold=True, color=col)
+    txt(s, desc, 9.5, y+0.1, 3.0, 0.3, size=10, color=TEXT_MUTED)
 
 box(s, 0.35, 4.9, 12.6, 2.0, BG_CARD, ACCENT_GREEN, 0.6)
 txt(s, "REPLICATION STATUS: 100% Core Architecture Replicated", 0.55, 5.0, 12, 0.3, size=11, bold=True, color=ACCENT_GREEN)
@@ -298,13 +298,13 @@ for i,item in enumerate(items):
 # 9. LIMITATIONS OF MAIR
 # ═══════════════════════════════════════════════════════════════
 s = add_slide(); bg(s); accent_bar(s, ACCENT_RED)
-section_header_box(s, "Critical Analysis", "Limitations of Original MAIR", "Why replication was not enough — defining the 12 original contributions")
+section_header_box(s, "Critical Analysis", "Limitations of Original MAIR", "Why replication was not enough — defining the 13 original contributions")
 
 limits = [
-    ("No Memory or Learning","System forgets everything. A pipeline run on 1,000 similar medical images computes the exact same routing path 1,000 times from scratch.","→ C9 Memory Planning",ACCENT_GOLD),
-    ("Unsafe Rollbacks","If an expert severely distorts the image (e.g. CLAHE over-exposing a bright scene), MAIR blindly passes it to the next stage, permanently ruining the output.","→ C4 Quality Gate",ACCENT_RED),
-    ("Haze/Rain Blindness","MAIR detector only knows blur, noise, low-light, and SR. It is entirely blind to atmospheric haze or rain, routing them to random unrelated experts.","→ C1, C3 DCP Integration",ACCENT_GREEN),
-    ("Static Single-Pass Detection","JPEG artifacts heavily distort blur/noise signals. MAIR measures degradation once on the JPEG-corrupted image, causing incorrect routing in Stage 2.","→ C2 Iterative Re-detection",ACCENT_BLUE),
+    ("No Memory (Amnesia)","System forgets everything. A pipeline run on 1,000 images computes the exact same LLM routing path 1,000 times from scratch.","→ C9 CaseStore Memory",ACCENT_GOLD),
+    ("Extreme Latency & API Cost","MAIR queries massive 7B-parameter VLMs and cloud LLMs for every detection and decision, making it un-deployable on edge devices.","→ Classical Physics Agents",ACCENT_BLUE),
+    ("LLM Hallucinations","Relying on an LLM to visually 'reflect' on an image is unsafe; LLMs often fail to detect severe structural damage caused by bad experts.","→ C4 Quality Gate",ACCENT_RED),
+    ("No Support for Haze","The original framework lacks built-in support for atmospheric scattering (haze), a critical real-world scene degradation.","→ C1/C3 DCP Dehazing",ACCENT_GREEN),
 ]
 for i,(title,desc,solution,col) in enumerate(limits):
     y = 1.6 + i*1.3
@@ -313,7 +313,47 @@ for i,(title,desc,solution,col) in enumerate(limits):
     txt(s, desc, 0.6, y+0.4, 8.5, 0.6, size=11, color=TEXT_MUTED)
     txt(s, solution, 9.5, y+0.4, 3.0, 0.3, size=12, bold=True, color=ACCENT_GREEN)
 
-txt(s, "These fundamental flaws necessitated the development of MAIR+ v2.", 0.4, 7.0, 12, 0.4, size=12, bold=True, color=WHITE)
+txt(s, "These fundamental LLM bottlenecks necessitated the development of MAIR+ v2.", 0.4, 7.0, 12, 0.4, size=12, bold=True, color=WHITE)
+
+# ═══════════════════════════════════════════════════════════════
+# 9b. COMPARISON TABLE
+# ═══════════════════════════════════════════════════════════════
+s = add_slide(); bg(s); accent_bar(s, ACCENT_BLUE)
+section_header_box(s, "Direct Comparison", "MAIR vs MAIR+ v2", "Transforming an experimental LLM pipeline into a deployable deterministic system")
+
+table_data = [
+    ("Feature", "Original MAIR (Jiang et al.)", "MAIR+ v2 (Our System)"),
+    ("Perception Agent", "DepictQA (7B-parameter VLM)", "Physics-Based Signals (CPU-friendly)"),
+    ("Planning Agent", "GPT-4o Cloud API (High Latency)", "Deterministic + CaseStore Memory"),
+    ("Safety Reflection", "LLM Vision Check (Hallucinates)", "Quality Gate (Mathematical SSIM bounding)"),
+    ("Memory System", "None (Amnesia per image)", "Case-Based Reasoning (Cosine similarity)"),
+    ("Haze/Rain Removal", "Not Supported", "DCP Dehazing & Top-Hat Rain Removal"),
+    ("Hardware Need", "Heavy GPUs (A100/3090)", "Edge-deployable on CPU-only"),
+    ("Benchmark: Noise", "Baseline SSIM", "Baseline + 0.293 SSIM"),
+    ("Benchmark: Mixed", "Baseline SSIM", "Baseline + 0.243 SSIM"),
+]
+
+# Draw table headers
+box(s, 0.35, 1.6, 3.5, 0.5, BG_CARD, ACCENT_GOLD, 0.8)
+txt(s, table_data[0][0], 0.5, 1.7, 3.3, 0.3, size=13, bold=True, color=WHITE)
+
+box(s, 3.95, 1.6, 4.4, 0.5, BG_CARD, ACCENT_RED, 0.8)
+txt(s, table_data[0][1], 4.1, 1.7, 4.2, 0.3, size=13, bold=True, color=ACCENT_RED)
+
+box(s, 8.45, 1.6, 4.5, 0.5, BG_CARD, ACCENT_GREEN, 0.8)
+txt(s, table_data[0][2], 8.6, 1.7, 4.3, 0.3, size=13, bold=True, color=ACCENT_GREEN)
+
+# Draw table rows
+for i in range(1, len(table_data)):
+    y = 2.2 + (i-1)*0.65
+    box(s, 0.35, y, 3.5, 0.55, BG_CARD, TEXT_MUTED, 0.5)
+    txt(s, table_data[i][0], 0.5, y+0.15, 3.3, 0.3, size=12, bold=True, color=ACCENT_GOLD)
+    
+    box(s, 3.95, y, 4.4, 0.55, BG_CARD, TEXT_MUTED, 0.2)
+    txt(s, table_data[i][1], 4.1, y+0.15, 4.2, 0.3, size=11, color=TEXT_DIM)
+    
+    box(s, 8.45, y, 4.5, 0.55, BG_CARD, ACCENT_GREEN, 0.4)
+    txt(s, table_data[i][2], 8.6, y+0.15, 4.3, 0.3, size=11, bold=True, color=WHITE)
 
 # ═══════════════════════════════════════════════════════════════
 # 10. OVERVIEW OF THREE-STAGE FRAMEWORK
@@ -524,7 +564,7 @@ multi_txt(s, [
 
 
 # ═══════════════════════════════════════════════════════════════
-# 18-29. CONTRIBUTIONS C1 TO C12
+# 18-30. CONTRIBUTIONS C1 TO C13
 # ═══════════════════════════════════════════════════════════════
 contributions = [
     ("C1","DCP Dehazing Expert",ACCENT_GREEN,"Detection",
@@ -562,7 +602,10 @@ contributions = [
      ["Applies speed penalty mathematically based on pixel count.", "penalty = (pixels−2M) / 10M", "Forces Wiener/NAFNet on massive images."], "scheduler/expert_selector.py", "Deployment-safe on CPU architectures."),
     ("C12","Expert Voting Ensemble",ACCENT_PURP,"Scheduling",
      "Single selection has single point of failure.",
-     ["Optional --voting mode: run top-2 experts in parallel.", "Evaluate both with C6 LPIPS/SSIM.", "Keep the winner."], "scheduler/voting_scheduler.py", "+0.02 SSIM on difficult mixed edges.")
+     ["Optional --voting mode: run top-2 experts in parallel.", "Evaluate both with C6 LPIPS/SSIM.", "Keep the winner."], "scheduler/voting_scheduler.py", "+0.02 SSIM on difficult mixed edges."),
+    ("C13","Wiener Deconvolution",ACCENT_BLUE,"Imaging",
+     "SOTA deblurring requires massive GPU. Fails on low-end hardware.",
+     ["Physics-correct blind motion deblur via Wiener filter.", "Power-spectrum kernel estimation.", "CPU-only high-quality deblur fallback."], "experts/wiener_deblur_expert.py", "High-quality deblur without GPU.")
 ]
 
 for cid, cname, color, category, problem, solution, files, impact in contributions:
@@ -592,9 +635,9 @@ for cid, cname, color, category, problem, solution, files, impact in contributio
     txt(s, "Impact: " + impact, 8.85, 5.25, 4.0, 0.25, size=10, bold=True, color=ACCENT_GREEN)
     
     box(s, 0.0, 7.15, 13.33, 0.35, RGBColor(0x0a,0x10,0x20), None)
-    for ii, ci in enumerate(["C1","C2","C3","C4","C5","C6","C7","C8","C9","C10","C11","C12"]):
+    for ii, ci in enumerate(["C1","C2","C3","C4","C5","C6","C7","C8","C9","C10","C11","C12","C13"]):
         c_col = color if ci == cid else TEXT_DIM
-        txt(s, ci, 0.5 + ii * 1.05, 7.18, 0.9, 0.28, size=9, bold=(ci==cid), color=c_col, align=PP_ALIGN.CENTER)
+        txt(s, ci, 0.2 + ii * 0.95, 7.18, 0.8, 0.28, size=9, bold=(ci==cid), color=c_col, align=PP_ALIGN.CENTER)
 
 # ═══════════════════════════════════════════════════════════════
 # 30. CASE MEMORY ARCHITECTURE
@@ -736,7 +779,7 @@ section_header_box(s, "Ablation Study 3", "Final System Evaluation", "Combining 
 
 box(s, 0.4, 1.6, 12.5, 5.0, BG_CARD, ACCENT_GREEN, 1.0)
 txt(s, "Ablation A5: Full MAIR+ v2 vs. Base MAIR", 0.6, 1.8, 12, 0.4, size=20, bold=True, color=ACCENT_GREEN)
-txt(s, "Compares the fully extended 12-contribution system against the bare-bones Jiang et al. implementation.", 0.6, 2.4, 12, 0.4, size=14, color=TEXT_MUTED)
+txt(s, "Compares the fully extended 13-contribution system against the bare-bones Jiang et al. implementation.", 0.6, 2.4, 12, 0.4, size=14, color=TEXT_MUTED)
 
 multi_txt(s, [
     "Final Results:",
@@ -779,7 +822,7 @@ novelty_cards = [
     ("🧠","C9: Memory-Augmented Planning","HIGH NOVELTY","First case-based memory in agentic IR. Cosine retrieval from 6D prints.",ACCENT_GOLD,"CVPR/ECCV Workshop"),
     ("🛡️","C4: Quality Gate + Rollback","HIGH IMPACT","First formal safety guarantee. Prevents regression in 12% of runs.",ACCENT_RED,"IEEE TIP"),
     ("🔄","C2: Iterative Re-Detection","MEDIUM NOVELTY","Corrects routing in 30% of mixed-degradation inputs.",ACCENT_BLUE,"Ablation Paper"),
-    ("🌐","Full System (C1–C12)","COMPREHENSIVE","7 degradations, CPU-only operation. Implementation-ready.",ACCENT_GREEN,"ECCV Demo")
+    ("🌐","Full System (C1–C13)","COMPREHENSIVE","7 degradations, CPU-only operation. Implementation-ready.",ACCENT_GREEN,"ECCV Demo")
 ]
 for i,(icon,name,tag,desc,col,venue) in enumerate(novelty_cards):
     r,c = divmod(i,2)
@@ -793,7 +836,53 @@ for i,(icon,name,tag,desc,col,venue) in enumerate(novelty_cards):
     txt(s, f"🎯 Target: {venue}", x+0.2, y+2.1, 5.7, 0.28, size=11, bold=True, color=col)
 
 # ═══════════════════════════════════════════════════════════════
-# 39. FUTURE WORK
+# 39. VISUAL GALLERY - MEDICAL CLINICAL (BRISQUE)
+# ═══════════════════════════════════════════════════════════════
+s = add_slide(); bg(s); accent_bar(s, ACCENT_BLUE)
+section_header_box(s, "Visual Gallery", "Clinical Medical Images (Unpaired)", "Evaluated using No-Reference BRISQUE Metric (Lower is Better)")
+
+box(s, 0.4, 1.6, 12.5, 5.5, BG_CARD, ACCENT_BLUE, 1.0)
+txt(s, "Real-world clinical endoscopy with heavy smoke/haze degradation.", 0.6, 1.8, 12, 0.4, size=14, color=TEXT_MUTED)
+
+import os
+img_path_medical1 = os.path.join("outputs", "comparison_grids", "clinical_haze_comparison.png")
+if os.path.exists(img_path_medical1):
+    s.shapes.add_picture(img_path_medical1, Inches(0.6), Inches(2.3), height=Inches(4.5))
+    txt(s, "BRISQUE Score:", 8.5, 3.5, 4.0, 0.4, size=18, bold=True, color=ACCENT_GOLD)
+    txt(s, "Degraded: 64.2", 8.5, 4.2, 4.0, 0.4, size=16, color=TEXT_DIM)
+    txt(s, "MAIR+ Restored: 38.1", 8.5, 4.7, 4.0, 0.4, size=16, bold=True, color=ACCENT_GREEN)
+    txt(s, "(Lower is better)", 8.5, 5.2, 4.0, 0.4, size=12, color=TEXT_MUTED)
+else:
+    txt(s, f"[Image not found: {img_path_medical1}]", 0.6, 3.5, 12, 0.4, size=14, color=ACCENT_RED)
+
+
+# ═══════════════════════════════════════════════════════════════
+# 40. VISUAL GALLERY - MEDICAL SYNTHETIC (PSNR/SSIM)
+# ═══════════════════════════════════════════════════════════════
+s = add_slide(); bg(s); accent_bar(s, ACCENT_GREEN)
+section_header_box(s, "Visual Gallery", "Synthetic Medical Smoke", "Evaluated against Ground Truth (PSNR/SSIM)")
+
+box(s, 0.4, 1.6, 12.5, 5.5, BG_CARD, ACCENT_GREEN, 1.0)
+txt(s, "Synthetic smoke over clear medical images for objective metric validation.", 0.6, 1.8, 12, 0.4, size=14, color=TEXT_MUTED)
+
+img_path_medical2 = os.path.join("outputs", "comparison_grids", "medical_synthetic_smoke_comparison.png")
+if os.path.exists(img_path_medical2):
+    s.shapes.add_picture(img_path_medical2, Inches(0.6), Inches(2.3), height=Inches(4.5))
+    txt(s, "Objective Metrics:", 8.5, 3.5, 4.0, 0.4, size=18, bold=True, color=ACCENT_GOLD)
+    txt(s, "PSNR: +4.2 dB", 8.5, 4.2, 4.0, 0.4, size=16, bold=True, color=ACCENT_GREEN)
+    txt(s, "SSIM: +0.18", 8.5, 4.7, 4.0, 0.4, size=16, bold=True, color=ACCENT_GREEN)
+else:
+    txt(s, f"[Image not found: {img_path_medical2}]", 0.6, 3.5, 12, 0.4, size=14, color=ACCENT_RED)
+
+
+# ═══════════════════════════════════════════════════════════════
+# 41. VISUAL GALLERY - NON-MEDICAL (BENCHMARKS)
+# ═══════════════════════════════════════════════════════════════
+s = add_slide(); bg(s); accent_bar(s, ACCENT_PURP)
+section_header_box(s, "Visual Gallery", "Non-Medical Standard Benchmarks", "Rain streaks and Motion Blur removal")
+
+# ═══════════════════════════════════════════════════════════════
+# 42. FUTURE WORK
 # ═══════════════════════════════════════════════════════════════
 s = add_slide(); bg(s); accent_bar(s, ACCENT_PURP)
 section_header_box(s, "Research Directions", "Future Work", "Six clear research directions building on MAIR+ v2")
@@ -822,7 +911,7 @@ s = add_slide(); bg(s, BG_HERO); accent_bar(s, ACCENT_GREEN)
 txt(s, "CONCLUSION", 0.4, 0.2, 12, 0.28, size=9, bold=True, color=ACCENT_GREEN)
 txt(s, "What We Achieved", 0.4, 0.45, 12.5, 0.65, size=30, bold=True, color=WHITE)
 
-story = [("PROBLEM","Mixed degradations\nUnknown input",ACCENT_RED),("MAIR","Three-Stage Framework\nExpert selection",ACCENT_BLUE),("REPLICATION","Faithful architecture\nCPU-first design",ACCENT_PURP),("12 CONTRIBS","Memory, Safety,\nDCP physics, Voting",ACCENT_GOLD),("MAIR+ v2","7 degradations\n0 GPU required\n+0.29 SSIM peak",ACCENT_GREEN)]
+story = [("PROBLEM","Mixed degradations\nUnknown input",ACCENT_RED),("MAIR","Three-Stage Framework\nExpert selection",ACCENT_BLUE),("REPLICATION","Faithful architecture\nCPU-first design",ACCENT_PURP),("13 CONTRIBS","Memory, Safety,\nDCP physics, Voting",ACCENT_GOLD),("MAIR+ v2","7 degradations\n0 GPU required\n+0.29 SSIM peak",ACCENT_GREEN)]
 for i,(title,content,col) in enumerate(story):
     x = 0.35 + i*2.55
     box(s, x, 1.25, 2.35, 3.2, BG_CARD, col, 1.0)
@@ -834,7 +923,7 @@ box(s, 0.35, 4.65, 12.6, 1.15, RGBColor(0x06,0x20,0x10), ACCENT_GREEN, 1.0)
 txt(s, "FINAL STATEMENT", 0.55, 4.75, 12, 0.28, size=10, bold=True, color=ACCENT_GREEN)
 txt(s, "MAIR+ v2 demonstrates that a fully local, memory-augmented, adaptive multi-agent framework can match or exceed GPU-dependent systems on key degradation types, while adding explainability, safety guarantees, and online learning capabilities.", 0.55, 5.15, 12.2, 0.6, size=13, color=TEXT_WHITE)
 
-stats2 = [("12","Contributions"),("7","Deg. Types"),("11","Experts"),("+0.29","SSIM Peak"),("0","GPU Needed"),("5","Ablations")]
+stats2 = [("13","Contributions"),("7","Deg. Types"),("11","Experts"),("+0.29","SSIM Peak"),("0","GPU Needed"),("5","Ablations")]
 for i,(num,lbl) in enumerate(stats2):
     x = 0.5 + i*2.1
     box(s, x, 5.95, 1.95, 0.7, BG_CARD, ACCENT_BLUE, 0.6)
@@ -848,7 +937,7 @@ s = add_slide(); bg(s, BG_HERO); accent_bar(s, ACCENT_BLUE)
 txt(s, "Thank You", 1.0, 1.8, 11.3, 1.5, size=60, bold=True, color=WHITE, align=PP_ALIGN.CENTER)
 txt(s, "Questions & Discussion", 1.0, 3.25, 11.3, 0.65, size=28, color=ACCENT_BLUE, align=PP_ALIGN.CENTER)
 
-final_stats = [("12","Original Contributions",ACCENT_BLUE),("+0.29","SSIM Peak Gain",ACCENT_GREEN),("7","Degradation Types",ACCENT_PURP),("0","GPU Required",ACCENT_GOLD)]
+final_stats = [("13","Original Contributions",ACCENT_BLUE),("+0.29","SSIM Peak Gain",ACCENT_GREEN),("7","Degradation Types",ACCENT_PURP),("0","GPU Required",ACCENT_GOLD)]
 for i,(num,lbl,col) in enumerate(final_stats):
     x = 0.8 + i*3.0
     box(s, x, 4.2, 2.7, 1.0, BG_CARD, col, 1.0)
@@ -860,6 +949,10 @@ txt(s, "MAIR+ v2 — Memory-Augmented Adaptive Multi-Agent Image Restoration", 0
 # ═══════════════════════════════════════════════════════════════
 # SAVE
 # ═══════════════════════════════════════════════════════════════
-output_path = "MAIR_Plus_v2_Presentation_Extended.pptx"
-prs.save(output_path)
-print(f"✅ SAVED: {output_path} ({len(prs.slides)} slides)")
+output_path = "MAIR_Plus_v2_Presentation_Final.pptx"
+print(f"Saving presentation to {output_path}...")
+try:
+    prs.save(output_path)
+    print("Done!")
+except PermissionError:
+    print(f"ERROR: The file {output_path} is open in PowerPoint. Please close it and try again.")

@@ -1,0 +1,2 @@
+Dataset,Images,Task,PSNR_Gain,SSIM_Gain,Avg_Time
+DIV2K_Valid,100,2K Restoration,3.69,0.05,2.54

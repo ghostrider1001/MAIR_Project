@@ -6,5 +6,6 @@
 # This file is kept for git history. Do not import or use.
 raise ImportError(
     "swinir_expert.py is deprecated. "
-    "Use sr_expert.py (swinir_sr) or jpeg_expert.py (swinir_jpeg)."
+    "Use sr_expert.py (swinir_sr) or jpeg_expert.py (swinir_jpeg). "
+    "Include --tile 800 --tile_overlap 32"
 )

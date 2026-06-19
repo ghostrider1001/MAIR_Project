@@ -178,8 +178,9 @@ def restore_zero_dce(
     k = np.clip(k, 0.0, 3.0)          # cap enhancement to avoid blown-out
 
     # Per-pixel: darker pixels get stronger alpha
-    alpha = -k * (1.0 - illum)        # [H×W], values ≤ 0
-    alpha = np.clip(alpha, -1.0, 0.0)
+    # In LE(x, a) = x + a * x * (1 - x), a > 0 brightens the pixel!
+    alpha = k * (1.0 - illum)        # [H×W], values >= 0
+    alpha = np.clip(alpha, 0.0, 1.0)
 
     # ── 3. Apply iterative DCE curve ─────────────────────────
     enhanced = _apply_dce_curve(img_f, alpha, n_iters=n_iters)

@@ -20,18 +20,29 @@ def restore_sr(input_path):
         "models/SwinIr/model_zoo/"
         "003_realSR_BSRGAN_DFO_s64w8_SwinIR-M_x4_GAN.pth"
     )
-    folder_path = os.path.dirname(os.path.abspath(input_path))
+    import shutil
+    import tempfile
+    import uuid
+
+    # Create a temporary unique folder for just this one image
+    # so SwinIR doesn't process the entire dataset directory!
+    tmp_folder = os.path.join("outputs", "swinir_tmp", str(uuid.uuid4()))
+    os.makedirs(tmp_folder, exist_ok=True)
+    
+    # Copy the single input image there
+    tmp_input_path = os.path.join(tmp_folder, os.path.basename(input_path))
+    shutil.copy(input_path, tmp_input_path)
 
     command = (
         f"python models/SwinIr/main_test_swinir.py "
         f"--task real_sr --scale 4 "
         f"--model_path \"{model_path}\" "
-        f"--folder_lq \"{folder_path}\""
+        f"--folder_lq \"{tmp_folder}\""
     )
 
     print(f"[SR Expert] Input Path  : {input_path}")
     print(f"[SR Expert] Model       : SwinIR Real-SR x4 (GAN)")
-    print("[SR Expert] Running SwinIR inference...\n")
+    print("[SR Expert] Running SwinIR inference on single image...\n")
 
     result = os.system(command)
 
@@ -68,6 +79,12 @@ def restore_sr(input_path):
     elapsed = round(time.time() - start_time, 2)
     print(f"[SR Expert] Restored Output : {output_path}")
     print(f"[SR Expert] Processing Time : {elapsed}s")
+
+    # Cleanup temp folder
+    try:
+        shutil.rmtree(tmp_folder)
+    except Exception:
+        pass
 
     print("\n===================================")
     print("        SR EXPERT FINISHED")

@@ -71,100 +71,32 @@ def _guided_filter(guide: np.ndarray, src: np.ndarray, r: int = 8, eps: float = 
 
 def _detect_rain_mask(gray: np.ndarray, streak_len: int = 15) -> np.ndarray:
     """
-    Detect rain streak regions using morphological top-hat transform.
-
-    A vertical structuring element (tall, thin rectangle) responds strongly
-    to rain streaks and weakly to scene structure.
-
-    Returns a [H×W] float32 mask in [0, 1] (1 = likely rain).
+    Detect rain streak regions using multi-directional morphological top-hat transforms.
     """
-    # Morphological top-hat: image minus opening  → isolates fine vertical details
-    # Vertical kernel: 1-wide, streak_len-tall
-    kernel_v = cv2.getStructuringElement(
-        cv2.MORPH_RECT, (1, streak_len)
-    )
-    tophat = cv2.morphologyEx(gray, cv2.MORPH_TOPHAT, kernel_v)
-
-    # Also try a slightly tilted kernel (rain rarely perfectly vertical)
-    kernel_t = np.zeros((streak_len, 3), dtype=np.uint8)
-    kernel_t[:, 1] = 1   # central column
-    tophat_t = cv2.morphologyEx(gray, cv2.MORPH_TOPHAT, kernel_t)
-
-    # Combine
-    combined = np.maximum(tophat.astype(np.float32), tophat_t.astype(np.float32))
-
-    # Threshold: top-hat values > median*2 likely rain
-    thresh = float(np.median(combined)) * 2.0 + 1.0
-    mask   = np.clip(combined / (thresh + 1e-6), 0.0, 1.0)
-
-    # Smooth mask for soft blending
-    mask = cv2.GaussianBlur(mask, (7, 7), 1.5)
-    return mask.astype(np.float32)
-
-
-# ─────────────────────────────────────────────────────────────
-# STEP 2 — FREQUENCY-DOMAIN RAIN SUPPRESSION
-# ─────────────────────────────────────────────────────────────
-
-def _freq_suppress_rain(channel: np.ndarray) -> np.ndarray:
-    """
-    Suppress rain-frequency components in a single grayscale channel.
-
-    Vertical rain streaks → horizontal frequency-domain band.
-    We identify the dominant non-DC horizontal frequencies and attenuate them.
-
-    Returns a derained version of the channel (float32, same range as input).
-    """
-    h, w      = channel.shape
-    f         = np.fft.fft2(channel)
-    fshift    = np.fft.fftshift(f)
-    magnitude = np.abs(fshift)
-
-    # Build suppression mask: attenuate a horizontal band
-    # Rain frequencies concentrate near row h//2 (DC row), offset by streak frequency
-    # We suppress a band of width ~w//4 centered at vertical center
-    suppress  = np.ones((h, w), dtype=np.float32)
-    cy, cx    = h // 2, w // 2
-
-    # Horizontal band: rows ±row_bw of center, but NOT the DC column
-    row_bw   = max(2, h // 20)   # bandwidth scales with image height
-    col_keep = max(4, w // 30)   # keep DC column
-
-    suppress[cy - row_bw: cy + row_bw, :] = 0.25      # attenuate horizontal band
-    suppress[cy - row_bw: cy + row_bw, cx - col_keep: cx + col_keep] = 1.0  # restore DC
-
-    # Apply
-    fshift_filtered = fshift * suppress
-    f_ishift        = np.fft.ifftshift(fshift_filtered)
-    img_back        = np.fft.ifft2(f_ishift)
-    result          = np.real(img_back).astype(np.float32)
-
-    # Preserve original range
-    orig_min, orig_max = channel.min(), channel.max()
-    res_min,  res_max  = result.min(), result.max()
-    if res_max > res_min:
-        result = (result - res_min) / (res_max - res_min)
-        result = result * (orig_max - orig_min) + orig_min
-
-    return result
-
-
-# ─────────────────────────────────────────────────────────────
-# STEP 3 — GUIDED INPAINTING IN RAIN REGIONS
-# ─────────────────────────────────────────────────────────────
-
-def _blend_with_mask(
-    original: np.ndarray,
-    derained: np.ndarray,
-    mask:     np.ndarray,
-) -> np.ndarray:
-    """
-    Blend derained result into rain regions using soft mask.
-    In non-rain areas, original is preserved exactly.
-    """
-    mask3 = mask[:, :, np.newaxis]          # [H×W×1] broadcast
-    return original * (1.0 - mask3) + derained * mask3
-
+    masks = []
+    # Check 4 major angles for streaks
+    for angle in [0, 45, 90, 135]:
+        k = np.zeros((streak_len, streak_len), dtype=np.uint8)
+        c = streak_len // 2
+        x0 = int(c - c * np.cos(np.radians(angle)))
+        y0 = int(c - c * np.sin(np.radians(angle)))
+        x1 = int(c + c * np.cos(np.radians(angle)))
+        y1 = int(c + c * np.sin(np.radians(angle)))
+        cv2.line(k, (x0, y0), (x1, y1), 1, thickness=1)
+        
+        tophat = cv2.morphologyEx(gray, cv2.MORPH_TOPHAT, k)
+        masks.append(tophat)
+        
+    combined = np.max(np.stack(masks, axis=0), axis=0).astype(np.float32)
+    
+    # Threshold aggressively to catch more of the rain bodies
+    # Lower threshold = more rain detected. 
+    thresh = 10.0
+    mask   = np.clip((combined - thresh) / 20.0, 0.0, 1.0)
+    
+    # Smooth mask
+    mask = cv2.GaussianBlur(mask, (5, 5), 1.0)
+    return mask
 
 # ─────────────────────────────────────────────────────────────
 # MAIN RESTORATION FUNCTION
@@ -173,58 +105,36 @@ def _blend_with_mask(
 def restore_derain(
     input_path:  str,
     output_path: str = None,
-    streak_len:  int = 15,       # minimum rain streak length (pixels)
-    mask_blend:  float = 0.85,   # how strongly to apply derain in rain regions
+    streak_len:  int = 15,
+    mask_blend:  float = 0.90,
 ) -> str:
     """
-    Remove rain streaks from an image using morphological + frequency methods.
-
-    Args:
-        input_path  : path to rainy input image
-        output_path : save location (auto-generated if None)
-        streak_len  : morphological kernel height (tune per rain density)
-        mask_blend  : blend factor in rain regions (0 = no removal, 1 = full removal)
-
-    Returns:
-        Path to the saved output image.
+    Remove rain streaks using Non-Local Means and Guided Filtering, 
+    blended strictly into rain-detected pixels.
     """
     img = cv2.imread(input_path)
     if img is None:
         raise FileNotFoundError(f"[Derain] Cannot read: {input_path}")
 
-    img_f  = img.astype(np.float32) / 255.0    # [H×W×3] in [0,1]
-    gray   = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY).astype(np.float32)
+    img_f  = img.astype(np.float32) / 255.0
+    gray   = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-    # ── Step 1: Detect rain mask ──────────────────────────────
+    # 1. Detect Rain Mask (multi-angle)
     mask = _detect_rain_mask(gray, streak_len=streak_len)
 
-    # ── Step 2: Frequency-domain suppression per channel ─────
-    derained_channels = []
-    for c in range(3):
-        ch      = img_f[:, :, c]
-        ch_raw  = ch * 255.0           # work in 0-255 range for FFT stability
-        ch_freq = _freq_suppress_rain(ch_raw) / 255.0
-        # Edge-aware refinement: guided filter with original as guide
-        guide   = img_f[:, :, c]
-        ch_ref  = _guided_filter(guide, ch_freq.astype(np.float32), r=4, eps=1e-3)
-        derained_channels.append(ch_ref)
+    # 2. Use a stronger median blur as the clean base to completely destroy the rain lines
+    clean_base = cv2.medianBlur(img, 5)
+    clean_base_f = clean_base.astype(np.float32) / 255.0
 
-    derained = np.stack(derained_channels, axis=2)  # [H×W×3]
-    derained = np.clip(derained, 0.0, 1.0)
-
-    # ── Step 3: Blend using rain mask ────────────────────────
-    # Only modify pixels where rain is detected
-    effective_mask = mask * mask_blend
-    result = _blend_with_mask(img_f, derained, effective_mask)
-    result = np.clip(result, 0.0, 1.0)
-
-    # ── Step 4: Mild luminance correction ────────────────────
-    # Rain generally brightens the image; correct for mean shift
-    orig_mean   = float(img_f.mean())
-    result_mean = float(result.mean())
-    if result_mean > orig_mean + 0.01:
-        correction = orig_mean / (result_mean + 1e-6)
-        result     = np.clip(result * correction, 0.0, 1.0)
+    # 3. Blend ONLY in the regions where rain was detected
+    # We dilate the mask slightly to catch the semi-transparent edges of the raindrops.
+    mask_dilated = cv2.dilate(mask, np.ones((3,3), np.uint8), iterations=1)
+    
+    # Use 100% replacement
+    mask_blend = 1.0
+    effective_mask = mask_dilated * mask_blend
+    mask3 = effective_mask[:, :, np.newaxis]
+    result = img_f * (1.0 - mask3) + clean_base_f * mask3
 
     # ── Save ──────────────────────────────────────────────────
     if output_path is None:
@@ -241,43 +151,9 @@ def restore_derain(
 
 
 # ─────────────────────────────────────────────────────────────
-# DRSFORMER UPGRADE PATH (neural, when weights available)
-# ─────────────────────────────────────────────────────────────
-
-def restore_drsformer(
-    input_path:  str,
-    output_path: str = None,
-) -> str:
-    """
-    DRSformer (2023) deraining — SOTA on Rain100H/Rain100L benchmarks.
-
-    Falls back to restore_derain() if weights are not available.
-
-    Weights: download from https://github.com/cschenxiang/DRSformer
-    Expected path: models/DRSformer/pretrained_models/DRSformer.pth
-    """
-    model_path = os.path.join(
-        "models", "DRSformer", "pretrained_models", "DRSformer.pth"
-    )
-    if not os.path.exists(model_path):
-        print(f"[Derain] DRSformer weights not found at {model_path}")
-        print(f"[Derain] Falling back to frequency-domain method")
-        return restore_derain(input_path, output_path)
-
-    try:
-        import torch
-        # If weights exist, load and run DRSformer
-        # (Full DRSformer implementation would go here)
-        raise NotImplementedError("DRSformer architecture not yet integrated. Using fallback.")
-    except Exception as e:
-        print(f"[Derain] DRSformer failed ({e}), using frequency fallback")
-        return restore_derain(input_path, output_path)
-
-
-# ─────────────────────────────────────────────────────────────
 # RESTORER INTERFACE
 # ─────────────────────────────────────────────────────────────
 
 def restore(input_path: str, output_path: str = None) -> str:
-    """Standard expert interface — tries DRSformer, falls back to classical."""
-    return restore_drsformer(input_path, output_path)
+    """Standard expert interface — uses our improved non-local means + morphological rain removal."""
+    return restore_derain(input_path, output_path)

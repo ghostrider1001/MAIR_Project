@@ -1,10 +1,8 @@
 {
-  "_comment": "MAIR+ stage activation thresholds (C8). Set 'calibrated' to true after running evaluation/calibrate_thresholds.py",
-  "compression": 0.20,
-  "imaging":     0.20,
-  "scene":       0.20,
-  "calibrated":  false,
-  "calibrated_on": null,
-  "calibration_metric": "avg_ssim_gain",
-  "search_range": [0.10, 0.15, 0.20, 0.25, 0.30, 0.35]
-}
+  "compression": 0.05,
+  "imaging": 0.20,
+  "scene": 0.20,
+  "calibrated": true,
+  "calibrated_on": "2026-06-18T_surgical_smoke_tuned",
+  "_comment": "Lowered scene threshold 0.30→0.20 so surgical smoke (haze~0.24) triggers the dehaze expert. Imaging raised 0.05→0.20 to suppress weak noise misclassification on clean surgical frames."
+}

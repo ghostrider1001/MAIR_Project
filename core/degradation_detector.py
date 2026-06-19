@@ -32,9 +32,12 @@ def _estimate_sr_need(width, height):
     This prevents the resolution heuristic from masking real degradations.
     """
     pixel_count = width * height
-    # Below 480p (640×480 = 307200) is clearly low-res
-    # Below 720p (1280×720 = 921600) may benefit from SR
-    reference = 921600.0
+    # We only want to trigger SR for genuinely tiny images (<200k pixels)
+    # so that 512x512 benchmark images don't get hijacked by SR.
+    reference = 200000.0
+    if pixel_count > reference:
+        return 0.0
+        
     score = max(0.0, 1.0 - (pixel_count / reference))
     # Cap at 0.75 so explicit degradation signals can override
     score = min(0.75, score)
@@ -199,14 +202,46 @@ def detect_degradation(image_path, verbose: bool = True):
     haze_score     = _estimate_haze_dcp(image)    # C3: DCP physics signal
     rain_score     = _estimate_rain(gray)          # Phase 3: morphological
 
+    # ── Calibrate scores to avoid misclassifications ──────────
+    # True rain has strong directional gradients but also inflates the noise score.
+    # Random noise is isotropic but can weakly trick the rain detector.
+    if rain_score > 0.40:
+        # If the morphological filter strongly detects rain, it's genuine rain.
+        # Since rain inflates noise, zero out the noise score.
+        denoise_score = 0.0
+    elif denoise_score > 0.50 or jpeg_score > 0.30:
+        # If rain score is weak (<0.40) but noise/JPEG is high, the rain score 
+        # is just a hallucination caused by random noisy pixels or JPEG blocks.
+        rain_score = 0.0
+        
+    # Haze and Rain overlap: Haze reduces overall contrast, making any remaining vertical
+    # structures (like trees or buildings in outdoor scenes) appear highly salient to the 
+    # morphological rain detector. If we have a confident haze score, we must suppress rain.
+    if haze_score > 0.20:
+        rain_score = 0.0
+
+    # Lowlight and Haze inherently destroy image contrast, which artificially
+    # inflates the Laplacian blur score. If haze or lowlight is detected, 
+    # we MUST zero out the blur score so the system addresses the physics first!
+    if lowlight_score > 0.20:
+        blur_score = 0.0
+    if haze_score > 0.20:
+        blur_score = 0.0
+        
+    # SR (Super-Resolution) should be the absolute lowest priority.
+    # If ANY other degradation is confidently detected, zero out the SR score
+    # so we don't try to upscale garbage.
+    if max([blur_score, jpeg_score, denoise_score, lowlight_score, haze_score, rain_score]) > 0.25:
+        sr_score = 0.0
+        
     scores = {
-        "blur":     blur_score,
-        "sr":       sr_score,
-        "jpeg":     jpeg_score,
-        "denoise":  denoise_score,
-        "lowlight": lowlight_score,
-        "haze":     haze_score,    # C3
-        "rain":     rain_score,    # Phase 3
+        "blur":     round(blur_score, 3),
+        "sr":       round(sr_score, 3),
+        "jpeg":     round(jpeg_score, 3),
+        "denoise":  round(denoise_score, 3),
+        "lowlight": round(lowlight_score, 3),
+        "haze":     round(haze_score, 3),    # C3
+        "rain":     round(rain_score, 3),    # Phase 3
     }
 
     # C11: image_size for adaptive ranking

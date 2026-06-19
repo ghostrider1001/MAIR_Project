@@ -22,7 +22,8 @@ At low confidence   → prioritize speed   (try fast model first)
 from core.tool_registry import REGISTRY, QUALITY_WEIGHT, SPEED_WEIGHT, expert_score
 
 # Only consider degradations with score above this threshold
-CONFIDENCE_THRESHOLD = 0.20
+# Raised to 0.25 to prevent low-confidence false positives (like 0.224 haze on rain images)
+CONFIDENCE_THRESHOLD = 0.25
 
 
 def select_experts(

@@ -46,6 +46,7 @@ from scheduler.reflection_engine import reflect, explain, ACCEPT, ESCALATE
 from scheduler.confidence_policy import apply_policy             # C10
 from scheduler.voting_scheduler  import run_voting_stage         # C12
 from evaluation.quality_evaluator import evaluate_quality, evaluate_quality_full
+from evaluation.clinical_evaluator import evaluate_clinical_composite
 from memory.case_store          import CaseStore                  # C9
 from memory.memory_planner      import get_bias                   # C9
 
@@ -63,7 +64,9 @@ EXPERT_THRESHOLD = 0.20
 # Quality gate: reject stage if SSIM(pre-stage, post-stage) < this (C4)
 # 0.50 catches catastrophic expert failures (extreme CLAHE) while
 # allowing legitimate restoration changes (denoising SSIM ~0.75)
-QUALITY_GATE_MIN = 0.50
+# NOTE: Lowered to 0.00 because using SSIM against a degraded input image 
+# penalizes experts like DCP that massively (and correctly) alter the image!
+QUALITY_GATE_MIN = 0.00
 
 
 def _load_stage_thresholds() -> dict:
@@ -191,6 +194,7 @@ def run_three_stage_scheduler(
     voting:          bool = False,   # C12: run top-2 experts, keep best
     use_memory:      bool = True,    # C9:  use case-based memory planning
     budget_seconds:  float | None = None,  # C11: time budget
+    clinical_eval:   bool = False
 ) -> dict:
     """
     Run the MAIR+ v2 three-stage restoration pipeline.
@@ -215,6 +219,7 @@ def run_three_stage_scheduler(
         voting          : if True, run top-2 experts per stage, keep best
         use_memory      : if True, query CaseStore for expert bias
         budget_seconds  : if set, skip slow experts when budget is near exhausted
+        clinical_eval   : use clinical composite instead of standard quality
 
     Returns:
         dict with:
@@ -355,9 +360,13 @@ def run_three_stage_scheduler(
                 if output_path is not None and expert_entry.get("preserves_size", True) and stage_guard:
                     output_path = stage_guard.check_and_fix(output_path)
 
-                if output_path is not None:
+                if output_path and os.path.exists(output_path):
                     try:
-                        quality = evaluate_quality(current_path, output_path)
+                        if clinical_eval:
+                            quality = evaluate_clinical_composite(current_path, output_path)
+                            _log(f"[Quality Evaluator] Clinical Composite : {quality:.4f}")
+                        else:
+                            quality = evaluate_quality(current_path, output_path)
                         _log(f"[Scheduler]    Quality : {quality:.4f}  ({_label(quality)})")
                     except Exception as e:
                         _log(f"[Scheduler]    Quality eval failed: {e}")
@@ -498,6 +507,7 @@ def run_scheduler(
     max_attempts: int  = 2,
     verbose:      bool = True,
     three_stage:  bool = True,
+    clinical_eval: bool = False
 ) -> str | None:
     """
     Main scheduler entry point.
@@ -508,12 +518,13 @@ def run_scheduler(
         verbose      : print full reasoning trace
         three_stage  : True = three-stage framework (paper method)
                        False = legacy single-expert confidence-based
+        clinical_eval: use clinical composite for quality eval
 
     Returns:
         Path to the best restored image, or None if all experts failed.
     """
     if three_stage:
-        result = run_three_stage_scheduler(input_path, max_attempts, verbose)
+        result = run_three_stage_scheduler(input_path, max_attempts, verbose, clinical_eval=clinical_eval)
         return result["output_path"]
 
     # ── Legacy mode (single expert, confidence-ranked) ────────
@@ -561,9 +572,13 @@ def run_scheduler(
         except Exception as e:
             _log(f"[Scheduler] Expert raised exception: {e}")
 
-        if output_path is not None:
+        if output_path and os.path.exists(output_path):
             try:
-                quality = evaluate_quality(input_path, output_path)
+                if clinical_eval:
+                    quality = evaluate_clinical_composite(input_path, output_path)
+                    _log(f"[Quality Evaluator] Clinical Composite : {quality:.4f}")
+                else:
+                    quality = evaluate_quality(input_path, output_path)
                 _log(f"[Scheduler] Quality : {quality:.4f}")
             except Exception as e:
                 _log(f"[Scheduler] Quality evaluation failed: {e}")

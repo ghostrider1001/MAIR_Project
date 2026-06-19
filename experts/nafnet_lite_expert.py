@@ -52,6 +52,24 @@ import numpy as np
 # ─────────────────────────────────────────────────────────────
 
 def _guided_filter(guide: np.ndarray, src: np.ndarray, r: int = 8, eps: float = 1e-3) -> np.ndarray:
+    # BGR fix: operate only on L channel for structure, preserve color
+    if len(guide.shape) == 3:
+        hsv_guide = cv2.cvtColor(guide.astype(np.float32), cv2.COLOR_BGR2HSV)
+        hsv_src   = cv2.cvtColor(src.astype(np.float32), cv2.COLOR_BGR2HSV)
+        
+        g_v = hsv_guide[:, :, 2]
+        s_v = hsv_src[:, :, 2]
+        
+        def _box(x): return cv2.blur(x, (2*r+1, 2*r+1))
+        mean_I  = _box(g_v)
+        mean_p  = _box(s_v)
+        a       = (_box(g_v*s_v) - mean_I*mean_p) / (_box(g_v*g_v) - mean_I**2 + eps)
+        b       = mean_p - a * mean_I
+        filtered_v = np.clip(_box(a)*g_v + _box(b), 0.0, 1.0)
+        
+        hsv_src[:, :, 2] = filtered_v
+        return cv2.cvtColor(hsv_src, cv2.COLOR_HSV2BGR)
+        
     def _box(x): return cv2.blur(x, (2*r+1, 2*r+1))
     mean_I  = _box(guide)
     mean_p  = _box(src)
