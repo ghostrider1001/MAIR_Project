@@ -84,7 +84,7 @@ def build_comparison_grid(image_name):
         deg_label = f"1. Degraded ({t.upper()})"
         img_deg = add_label(img_deg.copy(), deg_label, color=(0, 0, 255))
         
-        rest_label = f"2. MAIR+ Restored"
+        rest_label = f"2. MAIR++ Restored"
         img_rest = add_label(img_rest.copy(), rest_label, color=(255, 255, 0))
         
         # Concatenate horizontally (1x2 Grid)

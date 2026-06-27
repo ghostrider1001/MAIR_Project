@@ -48,6 +48,31 @@ models/SwinIR/model_zoo/*.pth
 datasets/benchmark/
 datasets/calibration/
 
+# ─── Image datasets (too large for git — download separately) ─
+datasets/BSDS100/
+datasets/BSDS200/
+datasets/DIV2K/
+datasets/General100/
+datasets/Set14/
+datasets/T91/
+datasets/urban100/
+datasets/RESIDE/
+datasets/DeSmoke-LAP dataset/
+datasets/PG002/
+datasets/PG006/
+datasets/PG008/
+datasets/PG009/
+datasets/PG011/
+datasets/PG012/
+datasets/New folder/
+datasets/academic_subsets/
+datasets/benchmark_natural/
+datasets/historical/
+datasets/natural_clean/
+datasets/real_world_tests/
+datasets/synthetic_smoke/
+datasets/synthetic_smoke_sweep/
+
 # ─── Results CSV / JSON (too large for git, use DVC/artifacts) 
 results/*.csv
 results/*.json
@@ -67,3 +92,9 @@ outputs/
 results/
 *.pptx
 *.png
+
+# ─── Root-level generated/binary files ───────────────────────
+*.csv
+*.tex
+tmp_*.png
+test.png
