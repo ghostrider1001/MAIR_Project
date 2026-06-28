@@ -88,13 +88,19 @@ build/
 
 models/
 
+# outputs/ — all generated images, keep fully excluded
 outputs/
-results/
-*.pptx
-*.png
+
+# results/ — keep benchmark CSVs and JSONs, exclude images/pptx
+results/*.png
+results/*.pptx
+results/dashboard_assets/
+results/swinir_jpeg_car_jpeg10/
+results/swinir_real_sr_x4/
+results/synthetic_benchmark/
 
 # ─── Root-level generated/binary files ───────────────────────
-*.csv
-*.tex
+*.pptx
+*.png
 tmp_*.png
 test.png
