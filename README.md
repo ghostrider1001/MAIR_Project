@@ -74,7 +74,7 @@ Input Image
 
 ### Why Reverse-Causal Order?
 
-Real-world degradation happens in the order: **Scene → Imaging → Compression**
+Real-world degradation happens: **Scene → Imaging → Compression**
 
 Restoration must reverse it: **Compression → Imaging → Scene**
 
@@ -83,8 +83,6 @@ Removing JPEG artifacts first reveals the true blur signal for Stage 2. Fixing b
 ---
 
 ## ✨ 13 Original Contributions (C1–C13)
-
-> These extend the original Jiang et al. paper baseline.
 
 | ID | Contribution | What It Does | Impact |
 |----|-------------|--------------|--------|
@@ -121,13 +119,13 @@ Removing JPEG artifacts first reveals the true blur signal for Stage 2. Fixing b
 | `freq_derain` | Freq-Domain Rain Removal | Scene | Fast | **High** | ❌ |
 | `opencv_unsharp_deblur` | Unsharp Mask (fallback) | Imaging | Very Fast | Low | ❌ |
 
-> **Bold** = Phase 2/3 CPU additions that match or exceed deep-model quality with zero GPU and no pretrained weights.
+> **Bold** = CPU-only experts that require no GPU and no pretrained weights.
 
 ---
 
 ## 📊 Benchmark Results
 
-All benchmark results (CSV + JSON) are stored in `results/`. Run `python setup_and_demo.py` to regenerate.
+All benchmark result files (CSV + JSON) are committed in `results/`. Run `python setup_and_demo.py` to regenerate.
 
 | Dataset | Degradation | Avg SSIM Gain | Avg PSNR Gain | Notes |
 |---------|------------|:---:|:---:|-------|
@@ -139,17 +137,7 @@ All benchmark results (CSV + JSON) are stored in `results/`. Run `python setup_a
 | `blur_test` | Motion blur 25px | −0.0056 | +0.01 dB | 🔵 C4 rollback |
 | `lowlight_test` | Gamma darkening γ=3.5 | −0.0347 | −0.24 dB | 🔵 C4 rollback |
 
-> 🔵 **C4 rollbacks are intentional** — the Quality Gate detected the expert correction would harm image quality and reverted to the original. This is correct behavior: the pipeline refuses to make things worse.
-
-### Ablation Summary
-
-| Experiment | Configuration | SSIM Δ vs Baseline |
-|-----------|--------------|:-----------------:|
-| A1 | TSF (3-stage) vs Legacy (flat) | **+0.04** |
-| A2 | Memory ON vs OFF (C9) | **+0.02** |
-| A3 | Voting Ensemble ON vs OFF (C12) | **+0.01** |
-| A4 | Quality Gate 0.50 vs disabled | **−0.03** without gate |
-| A5 | Full v2 vs v1 baseline | **+0.08** |
+> 🔵 **C4 rollbacks are intentional** — the Quality Gate detected the correction would harm quality and reverted to the original. The pipeline refuses to make things worse.
 
 ---
 
@@ -165,59 +153,51 @@ All benchmark results (CSV + JSON) are stored in `results/`. Run `python setup_a
 ### Installation
 
 ```bash
-# Clone the repository
 git clone https://github.com/ghostrider1001/MAIR_Project.git
 cd MAIR_Project
 
-# Option A — install scripts (recommended)
-python install_phase1_deps.py   # core: opencv, scikit-image, numpy, einops
-python install_phase2_deps.py   # optional: torch, SwinIR, Restormer
+# Phase 1 — core dependencies (required)
+python install_phase1_deps.py
 
-# Option B — manual pip
-pip install opencv-python scikit-image numpy einops
-pip install torch torchvision lpips          # optional: C6 perceptual metrics
-pip install opencv-contrib-python            # optional: guided filter for DCP
+# Phase 2 — deep learning models (optional)
+python install_phase2_deps.py
 ```
 
-### Windows quick-start
-
+**Windows:**
 ```powershell
 .\install_packages.ps1
 ```
 
-### Model Weights (Optional)
+**Manual pip:**
+```bash
+pip install opencv-python scikit-image numpy einops scipy matplotlib tqdm
+pip install torch torchvision lpips          # optional: C6
+pip install opencv-contrib-python            # optional: guided DCP filter
+```
 
-Deep expert models are **not required** — all CPU experts work out of the box. If you want the highest quality on blur/SR/JPEG tasks:
+### Model Weights (Optional)
 
 | Expert | Weights Location |
 |--------|-----------------|
-| SwinIR Super-Resolution | `models/SwinIR/experiments/pretrained_models/` |
-| SwinIR JPEG Removal | `models/SwinIR/experiments/pretrained_models/` |
+| SwinIR SR / JPEG | `models/SwinIR/experiments/pretrained_models/` |
 | Restormer Deblur | `models/Restormer/Motion_Deblurring/pretrained_models/` |
+
+> All CPU experts work out of the box — no weights needed.
 
 ---
 
 ## 🔁 Full Replication
 
-> 📄 **See [REPLICATION.md](REPLICATION.md) for the complete step-by-step guide** to reproduce all benchmark results, ablation studies, and evaluation outputs from scratch.
+> 📄 **See [REPLICATION.md](REPLICATION.md) for the complete step-by-step guide.**
 
 **Quick replication (5 commands):**
 
 ```bash
-# 1. Install
-python install_phase1_deps.py
-
-# 2. Generate benchmark datasets
-python datasets/generate_benchmark.py
-
-# 3. Run full benchmark evaluation
-python evaluation/benchmark.py --all
-
-# 4. Run all ablation studies (A1–A5)
-python experiments/run_ablation.py --all --fast_only
-
-# 5. Full demo with reports
-python setup_and_demo.py
+python install_phase1_deps.py                        # 1. install
+python datasets/generate_benchmark.py                # 2. generate datasets
+python evaluation/benchmark.py --all                 # 3. benchmark
+python experiments/run_ablation.py --all --fast_only # 4. ablation
+python setup_and_demo.py                             # 5. full demo + reports
 ```
 
 ---
@@ -228,83 +208,58 @@ python setup_and_demo.py
 
 ```bash
 python run_pipeline.py --input path/to/image.jpg
+python run_pipeline.py --input image.jpg --report html      # HTML report (C7)
+python run_pipeline.py --input image.jpg --voting           # voting ensemble (C12)
+python run_pipeline.py --input image.jpg --no_memory        # disable memory (C9)
+python run_pipeline.py --input image.jpg --budget 30        # time budget (C11)
+python run_pipeline.py --input image.jpg --no_tsf           # legacy mode (ablation)
 ```
 
-### All Available Flags
+### Benchmark Evaluation
 
 ```bash
-# Report format (C7)
-python run_pipeline.py --input image.jpg --report console   # default
-python run_pipeline.py --input image.jpg --report html      # HTML report card
-python run_pipeline.py --input image.jpg --report both
-
-# Voting ensemble — runs top-2 experts, keeps better result (C12)
-python run_pipeline.py --input image.jpg --voting
-
-# Disable memory-augmented planning (C9)
-python run_pipeline.py --input image.jpg --no_memory
-
-# Time budget in seconds (C11 resolution-aware ranking)
-python run_pipeline.py --input image.jpg --budget 30
-
-# Legacy mode — disables Three-Stage Framework (for ablation)
-python run_pipeline.py --input image.jpg --no_tsf
+python evaluation/benchmark.py --list_sets                  # list available sets
+python evaluation/benchmark.py --all --max_images 3         # quick preview
+python evaluation/benchmark.py --all                        # full evaluation
+python evaluation/benchmark.py --all --voting               # with voting ensemble
+python run_all_benchmarks.py                                # all datasets, all configs
+python run_academic_eval.py                                  # academic benchmark suite
+python run_massive_eval.py                                   # massive evaluation run
 ```
 
-### Generate Benchmark Datasets
+### Ablation Studies
 
 ```bash
-python datasets/generate_benchmark.py                      # all types, 10 images each
-python datasets/generate_benchmark.py --types haze blur noise
-python datasets/generate_benchmark.py --n 5               # 5 images per type
-```
-
-Available types: `blur` `jpeg` `noise` `lowlight` `haze` `rain` `smoke` `mixed`
-
-### Run Benchmark Evaluation
-
-```bash
-python evaluation/benchmark.py --list_sets                 # list available sets
-python evaluation/benchmark.py --all --max_images 3        # quick preview
-python evaluation/benchmark.py --all                       # full evaluation
-python evaluation/benchmark.py --all --voting              # with voting ensemble
-```
-
-### Run Ablation Studies
-
-```bash
-python experiments/run_ablation.py --experiment A1         # TSF vs Legacy
-python experiments/run_ablation.py --experiment A2         # Memory ON vs OFF
-python experiments/run_ablation.py --experiment A3         # Voting ON vs OFF
-python experiments/run_ablation.py --experiment A4         # Quality Gate ON vs OFF
-python experiments/run_ablation.py --experiment A5         # Full v2 vs v1
-python run_balanced_ablation.py                            # balanced dataset ablation
-python run_targeted_ablation.py                            # targeted per-degradation
+python experiments/run_ablation.py --experiment A1          # TSF vs Legacy
+python experiments/run_ablation.py --experiment A2          # Memory ON vs OFF (C9)
+python experiments/run_ablation.py --experiment A3          # Voting ON vs OFF (C12)
+python experiments/run_ablation.py --experiment A4          # Quality Gate ON vs OFF (C4)
+python experiments/run_ablation.py --experiment A5          # Full v2 vs v1
+python run_balanced_ablation.py                             # balanced dataset ablation
+python run_targeted_ablation.py                             # per-degradation breakdown
+python run_quality_gate_stats.py                            # C4 trigger statistics
 ```
 
 ### Smoke / Desmoke Pipeline
 
 ```bash
-python run_desmoke.py --input image.jpg                    # desmoke a single image
-python run_smoke_sweep.py                                  # sweep over smoke densities
-python calculate_smoke_sweep_metrics.py                    # compute sweep metrics
-python summarize_smoke.py                                  # print summary table
+python run_desmoke.py --input image.jpg                     # desmoke single image
+python run_smoke_sweep.py                                   # sweep smoke densities
+python calculate_smoke_sweep_metrics.py                     # compute sweep metrics
+python summarize_smoke.py                                   # print summary table
+python evaluate_desmoke_lap.py                              # DeSmoke-LAP dataset eval
+python evaluate_synthetic_desmoke.py                        # synthetic desmoke eval
+python evaluate_clinical_metrics.py                         # clinical quality metrics
 ```
 
-### Evaluation Scripts
+### Dataset Generation
 
 ```bash
-python evaluate_synthetic_desmoke.py                       # synthetic smoke evaluation
-python evaluate_desmoke_lap.py                             # DeSmoke-LAP dataset eval
-python evaluate_clinical_metrics.py                        # clinical quality metrics
-python run_quality_gate_stats.py                           # C4 gate trigger statistics
-python run_academic_eval.py                                # academic benchmark suite
-```
-
-### Full Demo
-
-```bash
-python setup_and_demo.py    # generates datasets → benchmarks → reports
+python datasets/generate_benchmark.py                       # all types, 10 images each
+python datasets/generate_benchmark.py --types haze blur noise --n 20
+python make_better_smoke.py                                 # improved smoke generation
+python apply_standard_degradations.py                       # apply standard degradations
+python download_official_datasets.py                        # download benchmark datasets
 ```
 
 ---
@@ -316,6 +271,7 @@ MAIR_Project/
 │
 ├── run_pipeline.py              ← Main entry point
 ├── setup_and_demo.py            ← Full automated demo
+├── run_desmoke.py               ← Desmoke pipeline entry point
 │
 ├── agents/                      ← Agent hierarchy
 │   ├── base_agent.py            ← Abstract BaseAgent (observe/plan/act)
@@ -329,6 +285,7 @@ MAIR_Project/
 │   ├── spatial_integrity.py    ← Dimension guard  [C5]
 │   ├── iterative_context.py    ← Re-detection tracker  [C2]
 │   ├── restoration_context.py  ← Attempt history tracker
+│   ├── restormer_arch.py       ← Restormer model architecture
 │   └── tool_registry.py        ← Expert metadata registry  [C11]
 │
 ├── scheduler/                   ← Decision-making layer
@@ -338,16 +295,20 @@ MAIR_Project/
 │   ├── confidence_policy.py     ← Confidence tiers  [C10]
 │   └── voting_scheduler.py      ← Voting ensemble  [C12]
 │
-├── experts/                     ← Restoration experts
+├── experts/                     ← Restoration expert modules
 │   ├── dehaze_expert.py         ← DCP dehazing  [C1]
 │   ├── wiener_deblur_expert.py  ← Wiener deconvolution  [C13]
 │   ├── nafnet_lite_expert.py    ← NAFNet-Lite denoising
 │   ├── zero_dce_expert.py       ← Zero-DCE low-light
 │   ├── deraining_expert.py      ← Frequency rain removal
+│   ├── deblur_expert.py         ← Restormer motion deblur
+│   ├── denoise_expert.py        ← NLM denoising
 │   ├── sr_expert.py             ← SwinIR super-resolution
 │   ├── jpeg_expert.py           ← SwinIR JPEG-CAR
-│   ├── deblur_expert.py         ← Restormer motion deblur
-│   └── ...                      ← Additional fallback experts
+│   ├── fastjpeg_expert.py       ← Fast NLM JPEG fallback
+│   ├── lowlight_expert.py       ← CLAHE low-light
+│   ├── swinir_expert.py         ← SwinIR wrapper
+│   └── unsharp_deblur_expert.py ← Unsharp mask fallback
 │
 ├── memory/                      ← Case-based reasoning  [C9]
 │   ├── case_store.py            ← Record + cosine-similarity retrieval
@@ -364,42 +325,40 @@ MAIR_Project/
 ├── experiments/                 ← Ablation studies
 │   ├── run_ablation.py          ← A1–A5 ablation experiments
 │   ├── compare_experts.py       ← Side-by-side expert comparison
-│   └── test_deblur.py           ← Deblur expert testing
+│   └── test_deblur.py
 │
-├── datasets/                    ← Dataset generation scripts
+├── datasets/                    ← Dataset generation & download
 │   ├── generate_benchmark.py    ← Synthetic degradation generator
 │   ├── generate_synthetic_smoke.py
 │   ├── download_official_datasets.py
-│   └── download_academic_samples.py
+│   ├── download_academic_samples.py
+│   └── check_pairs.py
 │
-├── utils/                       ← Utilities
+├── utils/
 │   ├── report_generator.py      ← HTML + console report cards  [C7]
 │   └── visualizer.py            ← Before/after image display
 │
 ├── config/
 │   └── thresholds.json          ← Calibrated stage thresholds  [C8]
 │
-├── results/                     ← Benchmark outputs (CSV + JSON)
-│   ├── benchmark_*.csv / .json  ← Per-run benchmark results
-│   ├── desmoke_lap_eval.*       ← DeSmoke-LAP evaluation
-│   └── synthetic_desmoke_*.csv  ← Synthetic smoke evaluation
+├── results/                     ← ✅ Committed — benchmark CSVs + JSONs
+│   ├── benchmark_<type>_<timestamp>.{csv,json}  ← Per-run metrics
+│   ├── desmoke_lap_eval.{csv,json}              ← DeSmoke-LAP evaluation
+│   └── synthetic_desmoke_*.csv                  ← Smoke evaluation
 │
-├── outputs/                     ← Visual outputs from pipeline runs
-│   ├── comparison_*.png         ← Before/after comparison images
-│   ├── deblurred/               ← Deblur expert outputs
-│   ├── denoised/                ← Denoising outputs
-│   ├── dehazed/                 ← Dehazing outputs
-│   ├── desmoke_results/         ← Smoke removal outputs
-│   └── ...
+├── outputs/                     ← ✅ Root-level comparison PNGs committed
+│   └── comparison_Phase1_*.png  ← Before/after pipeline comparisons
 │
 ├── notebooks/
 │   └── MAIR_Demo.ipynb          ← Interactive demo notebook
 │
-├── main.tex                     ← Paper LaTeX source
+├── README.md                    ← This file
+├── REPLICATION.md               ← Full step-by-step replication guide
+├── CONTRIBUTIONS.md             ← Detailed contribution breakdown
 ├── requirements.txt             ← Full dependency list
 ├── requirements_minimal.txt     ← Core-only dependencies
-├── install_phase1_deps.py       ← Phase 1 installer (core)
-├── install_phase2_deps.py       ← Phase 2 installer (deep models)
+├── install_phase1_deps.py       ← Core installer
+├── install_phase2_deps.py       ← Deep model installer
 └── install_packages.ps1         ← Windows PowerShell installer
 ```
 
@@ -409,20 +368,20 @@ MAIR_Project/
 
 | Metric | Description | Better |
 |--------|-------------|--------|
-| **SSIM** | Structural Similarity Index — luminance, contrast, structure | ↑ Higher |
+| **SSIM** | Structural Similarity Index | ↑ Higher |
 | **PSNR** | Peak Signal-to-Noise Ratio (dB) | ↑ Higher |
-| **LPIPS** | Learned Perceptual Similarity — deep neural features [C6] | ↓ Lower |
+| **LPIPS** | Learned Perceptual Image Patch Similarity [C6] | ↓ Lower |
 
 ---
 
 ## 🔬 Ablation Experiments
 
-| ID | Name | What it tests |
-|----|------|--------------|
-| A1 | Three-Stage Framework vs Legacy | Stage ordering vs flat confidence-based selection |
+| ID | Name | Tests |
+|----|------|-------|
+| A1 | Three-Stage Framework vs Legacy | Stage ordering vs flat selection |
 | A2 | Memory-Augmented Planning (C9) | CaseStore ON vs OFF |
 | A3 | Expert Voting Ensemble (C12) | Voting ON vs OFF |
-| A4 | Quality Gate Rollback (C4) | Gate threshold 0.50 vs disabled (0.00) |
+| A4 | Quality Gate Rollback (C4) | Gate threshold 0.50 vs disabled |
 | A5 | Full MAIR+ v2 vs v1 Baseline | All 13 contributions vs TSF-only |
 
 ---
@@ -433,14 +392,14 @@ MAIR_Project/
 - **He, Sun & Tang** (2011). *Single Image Haze Removal Using Dark Channel Prior*. IEEE TPAMI.
 - **Liang et al.** (2021). *SwinIR: Image Restoration Using Swin Transformer*. ICCV 2021.
 - **Zamir et al.** (2022). *Restormer: Efficient Transformer for High-Resolution Image Restoration*. CVPR 2022.
-- **Li et al.** (2020). *Zero-Reference Deep Curve Estimation for Low-Light Image Enhancement*. CVPR 2020.
+- **Li et al.** (2020). *Zero-Reference Deep Curve Estimation for Low-Light Enhancement*. CVPR 2020.
 - **Chen et al.** (2022). *Simple Baselines for Image Restoration (NAFNet)*. ECCV 2022.
-- **Zhang et al.** (2018). *The Unreasonable Effectiveness of Deep Features as a Perceptual Metric (LPIPS)*. CVPR 2018.
+- **Zhang et al.** (2018). *The Unreasonable Effectiveness of Deep Features as a Perceptual Metric*. CVPR 2018.
 
 ---
 
 <div align="center">
 
-**MAIR+ v2** · Built with Python & OpenCV · IJCV 2026 Replication + 13 Original Contributions
+**MAIR+ v2** · Python & OpenCV · IJCV 2026 Replication + 13 Original Contributions
 
 </div>

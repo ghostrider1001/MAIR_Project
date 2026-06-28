@@ -87,3 +87,18 @@ outputs/comparison_grids/
 outputs/pipeline_tmp/
 outputs/reports/
 outputs/benchmark/
+
+# ─── Root-level generated / binary files — never commit these ────
+*.pptx
+*.png
+*.tex
+# Root-level result CSVs (per-run data, belongs in results/ not root)
+ablation_results.csv
+academic_benchmark_results.csv
+balanced_ablation_results.csv
+detector_confusion_matrix_actual.csv
+massive_benchmark_results.csv
+mixed_ablation_results_actual.csv
+reside_benchmark_results.csv
+smoke_sweep_empirical_metrics.csv
+smoke_sweep_results.csv
