@@ -18,37 +18,12 @@ ENV/
 .DS_Store
 Thumbs.db
 
-# ─── MAIR+ generated outputs ─────────────────────────────────
-# Inter-stage pipeline images (temp, not for tracking)
-outputs/pipeline_tmp/
-
-# Case memory (C9) — user-specific, grows with usage
-outputs/memory/
-outputs/memory/case_memory.json
-
-# HTML report cards (C7) — generated per run
-outputs/reports/
-
-# Benchmark restored images
-outputs/benchmark/
-results/benchmark_outputs/
-
-# ─── MAIR+ config (calibrated, not defaults) ─────────────────
-# Only ignore if locally calibrated (has calibrated=true set)
-# config/thresholds.json   ← kept in repo as default (calibrated=false)
-
 # ─── Model weights (too large for git) ───────────────────────
-models/SwinIR/experiments/pretrained_models/*.pth
-models/Restormer/Motion_Deblurring/pretrained_models/*.pth
-models/Restormer/Deraining/pretrained_models/*.pth
-models/Restormer/Deblurring/pretrained_models/*.pth
-models/SwinIR/model_zoo/*.pth
+models/
 
-# ─── Benchmark datasets (generated locally, not committed) ───
+# ─── Benchmark datasets (too large for git — download separately) ─
 datasets/benchmark/
 datasets/calibration/
-
-# ─── Image datasets (too large for git — download separately) ─
 datasets/BSDS100/
 datasets/BSDS200/
 datasets/DIV2K/
@@ -73,10 +48,6 @@ datasets/real_world_tests/
 datasets/synthetic_smoke/
 datasets/synthetic_smoke_sweep/
 
-# ─── Results CSV / JSON (too large for git, use DVC/artifacts) 
-results/*.csv
-results/*.json
-
 # ─── Notebooks / scratch ─────────────────────────────────────
 notebooks/.ipynb_checkpoints/
 *.ipynb_checkpoints
@@ -85,22 +56,3 @@ notebooks/.ipynb_checkpoints/
 *.egg-info/
 dist/
 build/
-
-models/
-
-# outputs/ — all generated images, keep fully excluded
-outputs/
-
-# results/ — keep benchmark CSVs and JSONs, exclude images/pptx
-results/*.png
-results/*.pptx
-results/dashboard_assets/
-results/swinir_jpeg_car_jpeg10/
-results/swinir_real_sr_x4/
-results/synthetic_benchmark/
-
-# ─── Root-level generated/binary files ───────────────────────
-*.pptx
-*.png
-tmp_*.png
-test.png
