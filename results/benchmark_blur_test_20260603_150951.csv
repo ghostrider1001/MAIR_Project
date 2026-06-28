@@ -1,0 +1,4 @@
+file,primary,confidence,baseline_ssim,baseline_psnr,restored_ssim,restored_psnr,ssim_gain,psnr_gain,time_s,invocations
+baby.png,blur,0.958,0.6692,23.71,0.6595,23.72,-0.0097,0.01,0.99,1
+babyx2.png,blur,0.935,0.5924,20.77,0.5848,20.78,-0.0076,0.01,0.42,1
+bird.png,blur,0.97,0.5471,21.24,0.5476,21.26,0.0005,0.02,0.46,1

@@ -56,3 +56,34 @@ notebooks/.ipynb_checkpoints/
 *.egg-info/
 dist/
 build/
+
+# ─── results/ — track all CSVs + JSONs, exclude images/pptx ─────
+results/*.png
+results/*.jpg
+results/*.jpeg
+results/*.pptx
+results/dashboard_assets/
+results/swinir_jpeg_car_jpeg10/
+results/swinir_real_sr_x4/
+results/synthetic_benchmark/
+
+# ─── outputs/ — root-level key images only, exclude ALL subdirs ──
+outputs/deblurred/
+outputs/dehazed/
+outputs/denoised/
+outputs/denoised_output/
+outputs/derained/
+outputs/desmoke_lap_eval/
+outputs/desmoke_results/
+outputs/expert_comparison/
+outputs/jpeg/
+outputs/lowlight/
+outputs/memory/
+outputs/swinir_tmp/
+outputs/swinir_tmp_jpeg/
+outputs/synthetic_smoke_samples/
+outputs/test_inputs/
+outputs/comparison_grids/
+outputs/pipeline_tmp/
+outputs/reports/
+outputs/benchmark/

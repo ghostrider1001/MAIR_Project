@@ -1,0 +1,36 @@
+{
+  "dataset": "rain_test",
+  "n_images": 1,
+  "timestamp": "2026-06-13 23:26:17",
+  "avg_baseline_ssim": 0.5418,
+  "avg_baseline_psnr": 18.23,
+  "avg_baseline_lpips": 0.5663,
+  "avg_restored_ssim": 0.6971,
+  "avg_restored_psnr": 24.3,
+  "avg_restored_lpips": 0.3767,
+  "avg_ssim_gain": 0.1553,
+  "avg_psnr_gain": 6.07,
+  "avg_lpips_gain": 0.1896,
+  "total_rollbacks": 0,
+  "avg_time_s": 2.19,
+  "per_image": [
+    {
+      "file": "lenna.png",
+      "primary": "denoise",
+      "confidence": 1.0,
+      "baseline_ssim": 0.5418,
+      "baseline_psnr": 18.23,
+      "baseline_lpips": 0.5662854909896851,
+      "restored_ssim": 0.6971,
+      "restored_psnr": 24.3,
+      "restored_lpips": 0.37672242522239685,
+      "ssim_gain": 0.1553,
+      "psnr_gain": 6.07,
+      "lpips_gain": 0.1896,
+      "rollbacks": 0,
+      "time_s": 2.19,
+      "invocations": 4,
+      "restored_path": "outputs\\denoised\\lenna_denoised_nafnet.png"
+    }
+  ]
+}

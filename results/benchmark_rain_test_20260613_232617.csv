@@ -1,0 +1,2 @@
+file,primary,confidence,baseline_ssim,baseline_psnr,baseline_lpips,restored_ssim,restored_psnr,restored_lpips,ssim_gain,psnr_gain,lpips_gain,rollbacks,time_s,invocations
+lenna.png,denoise,1.0,0.5418,18.23,0.5662854909896851,0.6971,24.3,0.37672242522239685,0.1553,6.07,0.1896,0,2.19,4

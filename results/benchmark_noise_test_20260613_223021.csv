@@ -1,0 +1,4 @@
+file,primary,confidence,baseline_ssim,baseline_psnr,baseline_lpips,restored_ssim,restored_psnr,restored_lpips,ssim_gain,psnr_gain,lpips_gain,rollbacks,time_s,invocations
+baby.png,rain,1.0,0.3849,22.6,,0.7136,26.44,,0.3287,3.84,,0,20.6,2
+babyx2.png,rain,1.0,0.4714,22.64,,0.6945,24.45,,0.2231,1.81,,0,10.81,2
+bird.png,rain,1.0,0.4523,22.57,,0.6752,24.71,,0.2229,2.14,,0,11.03,2

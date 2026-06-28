@@ -1,0 +1,4 @@
+file,primary,confidence,baseline_ssim,baseline_psnr,baseline_lpips,restored_ssim,restored_psnr,restored_lpips,ssim_gain,psnr_gain,lpips_gain,rollbacks,time_s,invocations
+TLH_2_001_0019.png,sr,0.75,0.6378,10.33,,0.3775,10.31,,-0.2603,-0.02,,1,10.83,3
+TLH_2_001_0023.png,sr,0.75,0.5109,7.39,,0.3466,7.41,,-0.1643,0.02,,0,12.21,3
+TLH_2_001_0026.png,sr,0.75,0.5582,9.53,,0.5585,9.55,,0.0003,0.02,,0,0.18,2

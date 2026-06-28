@@ -1,0 +1,2 @@
+file,primary,confidence,baseline_ssim,baseline_psnr,baseline_lpips,restored_ssim,restored_psnr,restored_lpips,ssim_gain,psnr_gain,lpips_gain,rollbacks,time_s,invocations
+lenna.png,rain,0.736,0.5418,18.23,0.5662854909896851,0.5638,19.38,0.5377684235572815,0.022,1.15,0.0285,0,1.43,2

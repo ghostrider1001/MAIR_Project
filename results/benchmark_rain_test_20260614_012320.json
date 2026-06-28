@@ -1,0 +1,36 @@
+{
+  "dataset": "rain_test",
+  "n_images": 1,
+  "timestamp": "2026-06-14 01:23:20",
+  "avg_baseline_ssim": 0.5418,
+  "avg_baseline_psnr": 18.23,
+  "avg_baseline_lpips": 0.5663,
+  "avg_restored_ssim": 0.4119,
+  "avg_restored_psnr": 13.84,
+  "avg_restored_lpips": 0.5869,
+  "avg_ssim_gain": -0.1299,
+  "avg_psnr_gain": -4.39,
+  "avg_lpips_gain": -0.0206,
+  "total_rollbacks": 0,
+  "avg_time_s": 0.85,
+  "per_image": [
+    {
+      "file": "lenna.png",
+      "primary": "rain",
+      "confidence": 0.736,
+      "baseline_ssim": 0.5418,
+      "baseline_psnr": 18.23,
+      "baseline_lpips": 0.5662854909896851,
+      "restored_ssim": 0.4119,
+      "restored_psnr": 13.84,
+      "restored_lpips": 0.5868908166885376,
+      "ssim_gain": -0.1299,
+      "psnr_gain": -4.39,
+      "lpips_gain": -0.0206,
+      "rollbacks": 0,
+      "time_s": 0.85,
+      "invocations": 2,
+      "restored_path": "outputs\\dehazed\\lenna_dehazed.png"
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "dataset": "blur_test",
+  "n_images": 3,
+  "timestamp": "2026-06-03 17:39:11",
+  "avg_baseline_ssim": 0.6029,
+  "avg_baseline_psnr": 21.9067,
+  "avg_restored_ssim": 0.5973,
+  "avg_restored_psnr": 21.92,
+  "avg_ssim_gain": -0.0056,
+  "avg_psnr_gain": 0.0133,
+  "avg_time_s": 0.5933,
+  "per_image": [
+    {
+      "file": "baby.png",
+      "primary": "blur",
+      "confidence": 0.958,
+      "baseline_ssim": 0.6692,
+      "baseline_psnr": 23.71,
+      "restored_ssim": 0.6595,
+      "restored_psnr": 23.72,
+      "ssim_gain": -0.0097,
+      "psnr_gain": 0.01,
+      "time_s": 0.96,
+      "invocations": 1,
+      "restored_path": "outputs\\denoised\\baby_denoised.png"
+    },
+    {
+      "file": "babyx2.png",
+      "primary": "blur",
+      "confidence": 0.935,
+      "baseline_ssim": 0.5924,
+      "baseline_psnr": 20.77,
+      "restored_ssim": 0.5848,
+      "restored_psnr": 20.78,
+      "ssim_gain": -0.0076,
+      "psnr_gain": 0.01,
+      "time_s": 0.38,
+      "invocations": 1,
+      "restored_path": "outputs\\denoised\\babyx2_denoised.png"
+    },
+    {
+      "file": "bird.png",
+      "primary": "blur",
+      "confidence": 0.97,
+      "baseline_ssim": 0.5471,
+      "baseline_psnr": 21.24,
+      "restored_ssim": 0.5476,
+      "restored_psnr": 21.26,
+      "ssim_gain": 0.0005,
+      "psnr_gain": 0.02,
+      "time_s": 0.44,
+      "invocations": 1,
+      "restored_path": "outputs\\denoised\\bird_denoised.png"
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "dataset": "rain_test",
+  "n_images": 1,
+  "timestamp": "2026-06-14 01:31:14",
+  "avg_baseline_ssim": 0.5418,
+  "avg_baseline_psnr": 18.23,
+  "avg_baseline_lpips": 0.5663,
+  "avg_restored_ssim": 0.5638,
+  "avg_restored_psnr": 19.38,
+  "avg_restored_lpips": 0.5378,
+  "avg_ssim_gain": 0.022,
+  "avg_psnr_gain": 1.15,
+  "avg_lpips_gain": 0.0285,
+  "total_rollbacks": 0,
+  "avg_time_s": 1.43,
+  "per_image": [
+    {
+      "file": "lenna.png",
+      "primary": "rain",
+      "confidence": 0.736,
+      "baseline_ssim": 0.5418,
+      "baseline_psnr": 18.23,
+      "baseline_lpips": 0.5662854909896851,
+      "restored_ssim": 0.5638,
+      "restored_psnr": 19.38,
+      "restored_lpips": 0.5377684235572815,
+      "ssim_gain": 0.022,
+      "psnr_gain": 1.15,
+      "lpips_gain": 0.0285,
+      "rollbacks": 0,
+      "time_s": 1.43,
+      "invocations": 2,
+      "restored_path": "outputs\\derained\\lenna_derained.png"
+    }
+  ]
+}

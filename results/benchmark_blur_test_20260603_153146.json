@@ -1,0 +1,56 @@
+{
+  "dataset": "blur_test",
+  "n_images": 3,
+  "timestamp": "2026-06-03 15:31:46",
+  "avg_baseline_ssim": 0.6029,
+  "avg_baseline_psnr": 21.9067,
+  "avg_restored_ssim": 0.5239,
+  "avg_restored_psnr": 19.7933,
+  "avg_ssim_gain": -0.079,
+  "avg_psnr_gain": -2.1133,
+  "avg_time_s": 434.13,
+  "per_image": [
+    {
+      "file": "baby.png",
+      "primary": "blur",
+      "confidence": 0.958,
+      "baseline_ssim": 0.6692,
+      "baseline_psnr": 23.71,
+      "restored_ssim": 0.5902,
+      "restored_psnr": 20.36,
+      "ssim_gain": -0.079,
+      "psnr_gain": -3.35,
+      "time_s": 480.7,
+      "invocations": 2,
+      "restored_path": "results/swinir_real_sr_x4\\babyx2_SwinIR.png"
+    },
+    {
+      "file": "babyx2.png",
+      "primary": "blur",
+      "confidence": 0.935,
+      "baseline_ssim": 0.5924,
+      "baseline_psnr": 20.77,
+      "restored_ssim": 0.5839,
+      "restored_psnr": 20.58,
+      "ssim_gain": -0.0085,
+      "psnr_gain": -0.19,
+      "time_s": 423.39,
+      "invocations": 2,
+      "restored_path": "results/swinir_real_sr_x4\\babyx2_SwinIR.png"
+    },
+    {
+      "file": "bird.png",
+      "primary": "blur",
+      "confidence": 0.97,
+      "baseline_ssim": 0.5471,
+      "baseline_psnr": 21.24,
+      "restored_ssim": 0.3975,
+      "restored_psnr": 18.44,
+      "ssim_gain": -0.1496,
+      "psnr_gain": -2.8,
+      "time_s": 398.3,
+      "invocations": 2,
+      "restored_path": "results/swinir_real_sr_x4\\birdx2_SwinIR.png"
+    }
+  ]
+}
